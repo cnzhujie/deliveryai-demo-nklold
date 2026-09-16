@@ -4,9 +4,11 @@
 @tailwind utilities;
 
 :root { color: #211f1c; background: #fbf5ea; font-synthesis: none; }
+.dark { color: #fbf5ea; background: #211f1c; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: #fbf5ea; }
+.dark body { background: #211f1c; }
 button, input { font: inherit; }
 ::selection { background: #ffddd8; color: #a9231a; }
 
@@ -34,6 +36,10 @@ html * {
   .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
   .paper-noise {
     background-image: radial-gradient(rgba(170, 110, 60, .08) .7px, transparent .7px);
+    background-size: 12px 12px;
+  }
+  .dark .paper-noise {
+    background-image: radial-gradient(rgba(255, 200, 150, .04) .7px, transparent .7px);
     background-size: 12px 12px;
   }
   .scrollbar-none::-webkit-scrollbar { display: none; }

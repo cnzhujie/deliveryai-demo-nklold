@@ -21,7 +21,8 @@ src/
 ├── state/orderReducer.ts # 全局状态 reducer（订单/购物车/服务/售罄/支付）
 ├── data/menu.ts          # 菜品/分类/桌台静态数据
 ├── hooks/
-│   └── useElderlyMode.ts # 老人模式 hook：localStorage + html.elderly class
+│   ├── useElderlyMode.ts # 老人模式 hook：localStorage + html.elderly class
+│   └── useDarkMode.ts    # 夜间模式 hook：localStorage + html.dark class
 ├── lib/utils.ts          # 工具函数：cn（类名合并）、money（¥ 金额格式化）
 ├── components/
 │   ├── BindTable.tsx     # 绑定餐桌视图
@@ -76,7 +77,8 @@ playwright.config.ts     # Playwright 配置
 
 - 颜色类名**直接硬编码在组件 JSX** 中（如 `bg-rice-100`、`text-charcoal-900`、`border-charcoal-900/5`），未使用 CSS 变量或语义 token 层。
 - 新增组件时沿用同样的 Tailwind 类名直写模式，不引入 CSS 变量抽象层。
-- 应用仅保留浅色主题，不使用 `dark:` 变体，Tailwind 未配置 `darkMode`。
+- 夜间模式配色映射：页面背景 `bg-rice-100 dark:bg-charcoal-900`；卡片/面板 `bg-white dark:bg-charcoal-700`；主要文字 `text-charcoal-900 dark:text-rice-100`；次要文字 `text-charcoal-500 dark:text-rice-200`；边框 `border-charcoal-900/5 dark:border-rice-200/10`。
+- 应用支持夜间模式，使用 `darkMode: 'class'` + `dark:` 变体；通过 `useDarkMode` hook（localStorage key: `dark-mode`）管理 `dark` class。
 
 ### 全局过渡
 
@@ -121,7 +123,7 @@ export function useXxx() {
 ### 新增 localStorage 持久化功能
 
 - 统一使用 `try/catch` 包裹 `localStorage.getItem` / `setItem`，不可用时降级为内存态，不报错不阻塞。
-- 现有 localStorage key：`i18nextLng`（语言）、`elderly-mode`（老人模式，值为 `true`/`false`）。
+- 现有 localStorage key：`i18nextLng`（语言）、`elderly-mode`（老人模式，值为 `true`/`false`）、`dark-mode`（夜间模式，值为 `true`/`false`）。
 
 ### 新增挂载前初始化逻辑
 
@@ -131,7 +133,7 @@ export function useXxx() {
 
 - 页面级组件放在 `src/components/`，通用 UI 组件放在 `src/components/ui/`。
 - 组件使用 Tailwind 类名直写样式，不使用 CSS Modules 或 styled-components。
-- 颜色使用上述色板，仅需浅色样式。
+- 颜色使用上述色板，需同时提供浅色样式和 `dark:` 夜间模式变体。
 - 弹窗使用 `src/components/ui/dialog.tsx` 封装的 `Dialog` / `DialogContent`。
 - 按钮使用 `src/components/ui/button.tsx` 封装的 `Button` 组件，选择合适的 variant。
 - 图标使用 `lucide-react`，颜色通过 `currentColor` 继承。
@@ -205,7 +207,7 @@ export function useXxx() {
 - 改动是否覆盖需求的正反两类路径（如超级辣弹提示、其它辣度不弹）。
 - 是否破坏既有基于 class / 文案的 E2E 断言；改样式或文案时同步评估 `e2e/` 用例。
 - 中英文文案（`src/i18n.ts` 的 zh / en）是否都已更新；新增 localStorage key 是否遵循 try/catch 降级约定。
-- 是否引入 `dark:` 变体、后端调用或新 UI 库等“不要做”中禁止的内容。
+- 是否引入后端调用或新 UI 库等“不要做”中禁止的内容；`dark:` 变体已允许。
 - 是否需要更新本文件的目录结构、色板或约定描述。
 
 ### 验证选择
@@ -246,5 +248,5 @@ export function useXxx() {
 - 不引入额外的 UI 库或设计系统框架。
 - 不使用 CSS Modules 或 styled-components，统一 Tailwind 类名。
 - 不修改 `server/` 目录（仅用于演示健康检查，无业务逻辑）。
-- 不引入暗色模式或 `dark:` 变体，应用保持单一浅色主题。
+- 夜间模式使用 Tailwind `darkMode: 'class'` + `dark:` 变体，通过 `useDarkMode` hook 管理 `dark` class。
 - 不引入后端 API 调用，所有数据为前端内存态。
